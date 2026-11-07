@@ -1,0 +1,14 @@
+{
+  "name": "atende",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema acadêmico de atendimento com filas encadeadas",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "setup": "node comandos/project.mjs setup",
+    "dev": "node comandos/project.mjs dev",
+    "check": "node comandos/project.mjs check",
+    "build": "node comandos/project.mjs build",
+    "start": "node comandos/project.mjs start"
+  }
+}
