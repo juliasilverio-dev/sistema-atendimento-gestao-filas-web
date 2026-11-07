@@ -1,15 +1,18 @@
+﻿import type { LineSnapshot, Ticket } from '../types/ticket';
 import { request } from './api';
 import { parseLine, parseTicket } from './contracts';
 
-export async function getLine() {
-  return parseLine(await request('/line'));
+export async function getLine(signal?: AbortSignal): Promise<LineSnapshot> {
+  const data = await request('/line', { signal: signal });
+  return parseLine(data);
 }
 
-export async function callNext() {
+export async function callNext(): Promise<Ticket | null> {
   const data = await request('/line/next', { method: 'POST' });
-  return data === null ? null : parseTicket(data);
-}
 
-export async function completeAttendance(code: string) {
-  return parseTicket(await request(`/line/${encodeURIComponent(code)}/complete`, { method: 'POST' }));
+  if (data === null) {
+    return null;
+  }
+
+  return parseTicket(data);
 }

@@ -1,6 +1,6 @@
 export type TicketCategory = 'normal' | 'preferencial';
 export type ServiceCode = 'consulta' | 'exame' | 'agendamento';
-export type TicketStatus = 'aguardando' | 'em_atendimento' | 'atendida';
+export type TicketStatus = 'aguardando' | 'chamada';
 
 export interface Ticket {
   code: string;
@@ -8,8 +8,7 @@ export interface Ticket {
   service: ServiceCode;
   status: TicketStatus;
   issuedAt: string;
-  startedAt: string | null;
-  finishedAt: string | null;
+  calledAt: string | null;
 }
 
 export interface CreateTicketInput {

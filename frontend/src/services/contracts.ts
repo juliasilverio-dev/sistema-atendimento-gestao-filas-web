@@ -1,33 +1,79 @@
-import { isCategory, isService } from '../constants/catalog';
+﻿import { isCategory, isService } from '../constants/catalog';
 import type { LineSnapshot, Ticket } from '../types/ticket';
 import { ApiError, isRecord } from './api';
 
 function isDate(value: unknown): value is string {
-  return typeof value === 'string' && Number.isFinite(Date.parse(value));
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  return Number.isFinite(Date.parse(value));
 }
 
+// O tipo TypeScript não valida dados que chegam pela rede.
+// Estas verificações confirmam, uma etapa por vez, os campos de uma senha.
 function isTicket(value: unknown): value is Ticket {
-  return isRecord(value)
-    && typeof value.code === 'string' && value.code.length > 0
-    && isCategory(value.category) && isService(value.service)
-    && (value.status === 'aguardando' || value.status === 'em_atendimento' || value.status === 'atendida')
-    && isDate(value.issuedAt)
-    && (value.startedAt === null || isDate(value.startedAt))
-    && (value.finishedAt === null || isDate(value.finishedAt));
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  if (typeof value.code !== 'string' || value.code.length === 0) {
+    return false;
+  }
+
+  if (!isCategory(value.category) || !isService(value.service)) {
+    return false;
+  }
+
+  if (value.status !== 'aguardando' && value.status !== 'chamada') {
+    return false;
+  }
+
+  if (!isDate(value.issuedAt)) {
+    return false;
+  }
+
+  if (value.status === 'aguardando') {
+    return value.calledAt === null;
+  }
+
+  return isDate(value.calledAt);
 }
 
 export function parseTicket(value: unknown): Ticket {
-  if (!isTicket(value)) throw new ApiError('O serviço retornou dados de senha inválidos.');
+  if (!isTicket(value)) {
+    throw new ApiError('O serviço retornou dados de senha inválidos.');
+  }
+
   return value;
 }
 
 export function parseLine(value: unknown): LineSnapshot {
-  if (!isRecord(value) || !Array.isArray(value.waiting)
-    || !value.waiting.every(isTicket)
-    || !value.waiting.every((ticket) => ticket.status === 'aguardando')
-    || !(value.current === null || (isTicket(value.current) && value.current.status === 'em_atendimento'))) {
-    throw new ApiError('O serviço retornou dados de fila inválidos.');
+  const errorMessage = 'O serviço retornou dados de fila inválidos.';
+
+  if (!isRecord(value) || !Array.isArray(value.waiting)) {
+    throw new ApiError(errorMessage);
   }
 
-  return { waiting: value.waiting, current: value.current };
+  const waiting: Ticket[] = [];
+
+  for (const ticket of value.waiting) {
+    if (!isTicket(ticket) || ticket.status !== 'aguardando') {
+      throw new ApiError(errorMessage);
+    }
+
+    waiting.push(ticket);
+  }
+
+  let current: Ticket | null = null;
+
+  if (value.current !== null) {
+    if (!isTicket(value.current) || value.current.status !== 'chamada') {
+      throw new ApiError(errorMessage);
+    }
+
+    current = value.current;
+  }
+
+  return { waiting: waiting, current: current };
 }

@@ -1,20 +1,20 @@
-import type { ServiceCode, TicketCategory, TicketStatus } from '../types/ticket';
+import type { ServiceCode, TicketCategory } from '../types/ticket';
 
-export const serviceLabels: Record<ServiceCode, string> = {
+// Estes objetos traduzem os códigos da API para os nomes exibidos nas telas.
+export const serviceLabels = {
   consulta: 'Consulta',
   exame: 'Exame',
   agendamento: 'Agendamento',
 };
 
-export const categoryLabels: Record<TicketCategory, string> = {
+export const categoryLabels = {
   normal: 'Normal',
   preferencial: 'Preferencial',
 };
 
-export const statusLabels: Record<TicketStatus, string> = {
+export const statusLabels = {
   aguardando: 'Aguardando',
-  em_atendimento: 'Em atendimento',
-  atendida: 'Atendida',
+  chamada: 'Chamada',
 };
 
 export function isCategory(value: unknown): value is TicketCategory {
