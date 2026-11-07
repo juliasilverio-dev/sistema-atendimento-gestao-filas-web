@@ -1,0 +1,73 @@
+# Dependências instaladas: recuperadas com npm run setup.
+node_modules/
+
+# Código compilado, testes gerados e relatórios de cobertura.
+dist/
+.test-dist/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Caches das ferramentas de desenvolvimento.
+.cache/
+.npm/
+.vite/
+.vite-temp/
+.eslintcache
+.sites-runtime/
+
+# Configurações locais e variáveis de ambiente.
+# Os exemplos sem credenciais continuam disponíveis no repositório.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+.npmrc
+.netrc
+
+# Credenciais, chaves privadas e certificados locais.
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Logs e arquivos de controle de processos.
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.pid
+*.pid.lock
+
+# Arquivos temporários e cópias automáticas de editores.
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Preferências pessoais dos editores.
+# Extensões, tarefas e configuração de depuração podem ser compartilhadas.
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.idea/
+.vs/
+
+# Arquivos criados pelo Windows e pelo macOS.
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Código-fonte, testes e package-lock.json devem continuar versionados.
