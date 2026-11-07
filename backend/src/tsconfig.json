@@ -11,6 +11,6 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["index.ts", "app.ts", "modules/**/*.ts", "shared/**/*.ts"],
+  "include": ["index.ts", "app.ts", "modules/**/*.ts", "compartilhado/**/*.ts"],
   "exclude": ["node_modules", "dist", "tests"]
 }

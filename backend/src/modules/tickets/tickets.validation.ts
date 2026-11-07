@@ -6,11 +6,23 @@ export interface InputIssue {
   message: string;
 }
 
-// A propriedade `valid` permite distinguir uma entrada validada de uma lista
-// de erros, sem lançar uma exceção para um erro esperado de preenchimento.
-export type TicketInputValidation =
-  | { valid: true; data: CreateTicketInput }
-  | { valid: false; errors: InputIssue[] };
+interface ValidTicketInput {
+  valid: true;
+  data: CreateTicketInput;
+}
+
+interface InvalidTicketInput {
+  valid: false;
+  errors: InputIssue[];
+}
+
+// A validação tem dois resultados possíveis: dados válidos ou uma lista de erros.
+export type TicketInputValidation = ValidTicketInput | InvalidTicketInput;
+
+interface TicketInputFields {
+  category?: unknown;
+  service?: unknown;
+}
 
 export function validateCreateTicketInput(input: unknown): TicketInputValidation {
   if (typeof input !== 'object' || input === null || Array.isArray(input)) {
@@ -20,9 +32,9 @@ export function validateCreateTicketInput(input: unknown): TicketInputValidation
     };
   }
 
-  // A asserção permite inspecionar as propriedades; seus valores ainda são
-  // `unknown` e só serão aceitos depois das verificações abaixo.
-  const body = input as Record<string, unknown>;
+  // Já sabemos que a entrada é um objeto. Os campos continuam desconhecidos
+  // até que as verificações de categoria e serviço sejam concluídas.
+  const body = input as TicketInputFields;
   const errors: InputIssue[] = [];
 
   for (const field of Object.keys(body)) {

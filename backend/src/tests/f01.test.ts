@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
-import { once } from 'node:events';
 import test from 'node:test';
-import { app } from '../app';
+import { createTestApi } from './http-test-helper';
 import { validateCreateTicketInput } from '../modules/tickets/tickets.validation';
 
 test('F01: aceita todas as seis combinações de categoria e serviço', () => {
@@ -68,17 +67,8 @@ test('F01: rejeita campos extras e preserva a entrada recebida', () => {
 });
 
 test('F01: disponibiliza os catálogos HTTP com os códigos e rótulos usados nas telas', async (t) => {
-  const server = app.listen(0, '127.0.0.1');
-  await once(server, 'listening');
-  t.after(() => new Promise<void>((resolve, reject) => {
-    server.close((error) => error ? reject(error) : resolve());
-  }));
-
-  const address = server.address();
-  assert.ok(address && typeof address === 'object');
-  const baseUrl = `http://127.0.0.1:${address.port}`;
-
-  const categories = await fetch(`${baseUrl}/api/categories`);
+  const api = await createTestApi(t);
+  const categories = await api.get('/categories');
   assert.equal(categories.status, 200);
   assert.match(categories.headers.get('content-type') ?? '', /application\/json/);
   assert.deepEqual(await categories.json(), {
@@ -88,7 +78,7 @@ test('F01: disponibiliza os catálogos HTTP com os códigos e rótulos usados na
     ],
   });
 
-  const services = await fetch(`${baseUrl}/api/services`);
+  const services = await api.get('/services');
   assert.equal(services.status, 200);
   assert.deepEqual(await services.json(), {
     data: [
